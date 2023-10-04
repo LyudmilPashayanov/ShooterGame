@@ -25,13 +25,25 @@ protected:
 	class UInputMappingContext* PlayerMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	class UInputAction* MoveAction;
+	class UInputAction* MoveForwardAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	class UInputAction* TurnAction;
+	class UInputAction* MoveSideAction;
 
-	void LookCallback(const FInputActionValue& Value);
-	void MoveCallback(const FInputActionValue& Value);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	class UInputAction* LookPitchAction;	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	class UInputAction* LookYawAction;	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	class UInputAction* JumpAction;
+
+	void LookPitchCallback(const FInputActionValue& Value);
+	void MoveForwardCallback(const FInputActionValue& Value);
+	void MoveSideCallback(const FInputActionValue& Value);
+	void LookYawCallback(const FInputActionValue& Value);
+	void JumpCallback(const FInputActionValue& Value);
 	APlayerController* PlayerController;
 private:
 

@@ -49,18 +49,39 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
 	if (EnhancedInputComponent)
 	{
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShooterCharacter::MoveCallback);
-		EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &AShooterCharacter::LookCallback);
+		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &AShooterCharacter::MoveForwardCallback);
+		EnhancedInputComponent->BindAction(MoveSideAction, ETriggerEvent::Triggered, this, &AShooterCharacter::MoveSideCallback);
+		EnhancedInputComponent->BindAction(LookPitchAction, ETriggerEvent::Triggered, this, &AShooterCharacter::LookPitchCallback);
+		EnhancedInputComponent->BindAction(LookYawAction, ETriggerEvent::Triggered, this, &AShooterCharacter::LookYawCallback);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AShooterCharacter::JumpCallback);
 	}
 }
 
-void AShooterCharacter::LookCallback(const FInputActionValue& Value)
+void AShooterCharacter::MoveForwardCallback(const FInputActionValue& Value) // moving W and S
 {
-	UE_LOG(LogTemp, Log, TEXT("Looking up and down"));
+	float forwardValue = Value.Get<float>();
+	AddMovementInput(GetActorForwardVector() * forwardValue);
 }
 
-void AShooterCharacter::MoveCallback(const FInputActionValue& Value)
+void AShooterCharacter::MoveSideCallback(const FInputActionValue& Value) // moving D and A
 {
-	UE_LOG(LogTemp, Log, TEXT("moving W and S"));
+	float SideValue = Value.Get<float>();
+	AddMovementInput(GetActorRightVector() * SideValue);
+}
 
+void AShooterCharacter::LookPitchCallback(const FInputActionValue& Value) //Looking up and down
+{
+	float pitchValue = Value.Get<float>();
+	AddControllerPitchInput(pitchValue);
+}
+
+void AShooterCharacter::LookYawCallback(const FInputActionValue& Value) //Looking left and right
+{
+	float yawValue = Value.Get<float>();
+	AddControllerYawInput(yawValue);
+}
+
+void AShooterCharacter::JumpCallback(const FInputActionValue& Value) // jump
+{
+	Jump();
 }
