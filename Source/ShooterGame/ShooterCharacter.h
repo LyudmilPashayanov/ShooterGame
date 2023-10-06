@@ -8,6 +8,8 @@
 #include "GameFramework/Character.h"
 #include "ShooterCharacter.generated.h"
 
+class AGun;
+
 UCLASS()
 class SHOOTERGAME_API AShooterCharacter : public ACharacter
 {
@@ -39,15 +41,23 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	class UInputAction* JumpAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	class UInputAction* ShootAction;
+
 	void LookPitchCallback(const FInputActionValue& Value);
 	void MoveForwardCallback(const FInputActionValue& Value);
 	void MoveSideCallback(const FInputActionValue& Value);
 	void LookYawCallback(const FInputActionValue& Value);
 	void JumpCallback(const FInputActionValue& Value);
+	void ShootCallback(const FInputActionValue& Value);
 	APlayerController* PlayerController;
 private:
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AGun> GunClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	AGun* Gun;
 
 	void SetupInputSystem();
 

@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Components/InputComponent.h"
+#include "Gun.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -21,6 +22,10 @@ void AShooterCharacter::BeginPlay()
 
 	PlayerController = Cast<APlayerController>(GetController());
 	SetupInputSystem();
+	Gun = GetWorld()->SpawnActor<AGun>(GunClass);
+	GetMesh()->HideBoneByName(TEXT("weapon_r"), EPhysBodyOp::PBO_None);
+	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
+	Gun->SetOwner(this);
 }
 
 void AShooterCharacter::SetupInputSystem()
@@ -54,6 +59,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(LookPitchAction, ETriggerEvent::Triggered, this, &AShooterCharacter::LookPitchCallback);
 		EnhancedInputComponent->BindAction(LookYawAction, ETriggerEvent::Triggered, this, &AShooterCharacter::LookYawCallback);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AShooterCharacter::JumpCallback);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AShooterCharacter::ShootCallback);
 	}
 }
 
@@ -84,4 +90,9 @@ void AShooterCharacter::LookYawCallback(const FInputActionValue& Value) //Lookin
 void AShooterCharacter::JumpCallback(const FInputActionValue& Value) // jump
 {
 	Jump();
+}
+
+void AShooterCharacter::ShootCallback(const FInputActionValue& Value)
+{
+	Gun->PullTrigger();
 }
