@@ -26,12 +26,16 @@ private:
 	USkeletalMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere)
-	UParticleSystem* MuzzleFlash;
+	UParticleSystem* MuzzleFlash;	
+	
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* ShotsCollideParticle;
 
 	UPROPERTY(EditAnywhere)
 	float MaxRange = 1000;
 
-
+	UPROPERTY(EditAnywhere)
+	float Damage = 10;
 
 public:	
 	// Called every frame

@@ -18,6 +18,7 @@ class SHOOTERGAME_API AShooterCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AShooterCharacter();
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -59,6 +60,12 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	AGun* Gun;
 
+	UPROPERTY(EditDefaultsOnly)
+	int MaxHealth = 100;
+
+	UPROPERTY(VisibleAnywhere)
+	int Health;
+
 	void SetupInputSystem();
 
 
@@ -69,4 +76,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	UFUNCTION(BlueprintPure)
+	bool IsDead() const;
 };

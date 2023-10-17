@@ -6,6 +6,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h" 
+#include "Engine/DamageEvents.h"
 
 
 // Sets default values
@@ -52,7 +53,14 @@ void AGun::PullTrigger()
 	if (succesfulHit) 
 	{
 		FString nameOfHit = hitResult.GetActor()->GetName();
-		UE_LOG(LogTemp, Log, TEXT("hit result: %s"), *nameOfHit);
+		FVector ShotDirection = -PlayerViewPointRot.Vector(); // gets the negative rotation of the direction of which the player is looking at.
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ShotsCollideParticle, hitResult.Location, ShotDirection.Rotation());
+		AActor* hitActor = hitResult.GetActor();
+		if(hitActor)
+		{
+			FPointDamageEvent DamageEvent(Damage, hitResult, ShotDirection, nullptr);
+			hitActor->TakeDamage(Damage, DamageEvent, controller, this);
+		}
 	}
 
 	//DrawDebugPoint(GetWorld(), PlayerViewPointLoc, 20, FColor::Red, true);

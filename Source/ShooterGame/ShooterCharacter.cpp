@@ -19,18 +19,31 @@ AShooterCharacter::AShooterCharacter()
 void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
+	Health = MaxHealth;
+	UE_LOG(LogTemp, Log, TEXT("current health: %f"), Health);
 	PlayerController = Cast<APlayerController>(GetController());
 	SetupInputSystem();
-	Gun = GetWorld()->SpawnActor<AGun>(GunClass);
-	GetMesh()->HideBoneByName(TEXT("weapon_r"), EPhysBodyOp::PBO_None);
-	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
-	Gun->SetOwner(this);
+	if (GunClass) 
+	{
+		Gun = GetWorld()->SpawnActor<AGun>(GunClass);
+		GetMesh()->HideBoneByName(TEXT("weapon_r"), EPhysBodyOp::PBO_None);
+		Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
+		Gun->SetOwner(this);
+	}
+}
+
+float AShooterCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float DamageToApply = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	DamageToApply = FMath::Min(Health, DamageToApply);
+	Health -= DamageToApply;
+	UE_LOG(LogTemp, Log, TEXT("current health: %d"), Health);
+	return DamageToApply;
 }
 
 void AShooterCharacter::SetupInputSystem()
 {
-	if (GetController())
+	if (PlayerController)
 	{
 		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
 		if (Subsystem)
@@ -61,6 +74,14 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AShooterCharacter::JumpCallback);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AShooterCharacter::ShootCallback);
 	}
+}
+
+bool AShooterCharacter::IsDead() const
+{
+	if (Health > 0)
+		return false;
+	else
+		return true;
 }
 
 void AShooterCharacter::MoveForwardCallback(const FInputActionValue& Value) // moving W and S
